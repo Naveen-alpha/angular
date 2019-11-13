@@ -1,0 +1,95 @@
+
+<marquee style="color:rgb(4, 136, 4)" style="font-size: 30px"> BOOK CRUD</marquee>
+
+
+<div class="header">
+    <h1>Welcome</h1>
+    <p>“The person, be it gentleman or lady, who has not pleasure in a good novel, must be intolerably stupid.”</p>
+  </div>
+
+<style>
+  .header {
+  padding: 30px;
+  text-align: center;
+  background: white;
+}
+
+.header h1 {
+  font-size: 50px;
+}
+   .sidenav {
+    height: 100%;
+    width: 160px;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: rgb(7, 184, 95);
+    overflow-x: hidden;
+    padding-top: 20px;
+  }
+  
+  .sidenav a {
+    padding: 6px 8px 6px 16px;
+    text-decoration: none;
+    font-size: 20px;
+    color: #000000;
+    display: block;
+  }
+  
+  .sidenav a:hover {
+    color: rgb(4, 59, 209);
+  }
+   
+  /* @media screen and (max-height: 450px) {
+    .sidenav {padding-top: 15px;}
+    .sidenav a {font-size: 18px;}
+  } */
+  .main {
+  margin-left: 160px; /* Same as the width of the sidenav */
+  font-size: 20px; /* Increased text to enable scrolling */
+  padding: 0px 10px;
+}
+  .search {
+    background-color: forestgreen;
+    color: black;
+    border-style: ridge 
+     
+    
+  }
+  </style>
+ 
+  <div  class="sidenav">
+      <nav>
+      <ul>
+      <li><a routerLink="/insert" routerLinkActive="active" title="insert"> insert</a></li>
+      <li><a routerLink="/viewbooks" routerLinkActive="active" title="view all book"> show book</a></li>
+      <li><a routerLink="/getByID" routerLinkActive="active" title="view book by id"> custom show</a></li>
+      <li><a routerLink="/updateByID" routerLinkActive="active" title="update book by id"> update </a></li>
+      <li><a routerLink="/deletebyID" routerLinkActive="active" title="delete book by id"> delete </a></li>
+      
+      
+      </ul>
+      </nav>
+      <div class="search">
+        <p>
+          Books stock
+        </p>
+      <input [(ngModel)]="searchText"  placeholder="search text goes here">
+    <ul>
+      <li style="color: #000000" *ngFor="let b of book | filter : searchText">
+          {{b.BookName}}
+      </li>
+    </ul> 
+    </div>
+  </div> 
+  
+<div class="main">
+   
+<router-outlet></router-outlet>
+</div>
+<div style="margin-left: 200px">
+    <code>promise|async</code>: 
+    <button (click)="clicked()">{{ arrived ? 'Reset' : 'Resolve' }}</button>
+    <span>Wait for it... {{ greeting | async }}</span>
+  </div>

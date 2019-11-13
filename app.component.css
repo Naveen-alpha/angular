@@ -1,0 +1,17 @@
+.ddsmoothmenu{font-size:13px;background-color:#4CAF50;width:100%}
+.ddsmoothmenu ul{z-index:100;margin:0;padding:0;list-style-type:none}
+.ddsmoothmenu ul li{position:relative;display:inline;float:left; overflow:hidden}
+.ddsmoothmenu ul li a{display:block;background-color:#4CAF50;color:#fff;font-size:15px;padding:.9em;text-decoration:none}
+.ddsmoothmenu ul li a.selected,.ddsmoothmenu ul li a:hover{background-color:#8bc34a}* html 
+.ddsmoothmenu ul li a{display:inline-block}
+.ddsmoothmenu ul li a:link,.ddsmoothmenu ul li a:visited{color:#fff}
+.ddsmoothmenu ul li a:hover{text-decoration:none}
+.ddsmoothmenu ul li ul{position:absolute;left:0;display:none;visibility:hidden}
+.ddsmoothmenu ul li ul li{display:list-item;float:none}
+.ddsmoothmenu ul li ul li ul{top:0}
+.ddsmoothmenu ul li ul li a{font:800 21px verdana;width:300px;margin:0;border-top-width:0;padding:3px;top:0}* html 
+.ddsmoothmenu{height:0}
+img {
+    float: right;
+  }
+  

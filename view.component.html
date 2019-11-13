@@ -1,0 +1,51 @@
+
+<h2 style="background-color:powderblue;">Get Book details</h2>
+    
+<label>Items per page:
+    <select [(ngModel)]="itemsPerPage" [value]="5">
+        <option value="5" selected="selected">5</option>
+        <option value="10">10</option>
+        <option value="15">15</option>
+        <option value="20">20</option>
+    </select>
+</label>
+
+<label style="float:right" >sort by
+    <select class='form-control' 
+    (change)="ChangingValue($event)" [value]="SortByID">
+        <option value="SortByID" selected="selected" >Id</option>
+        <option value="SortByPrice">Price</option>
+    </select>
+</label>
+
+<table  width=100% border="collapse">
+
+  <tr  style="font-family:verdana;" style="background-color:Tomato;">
+    <th>BookId</th>
+    <th>BookName</th>
+    <th>AuthorName</th>
+    <th>Price</th>
+  </tr>
+  <tr align="center" *ngFor="let b of book | paginate: { itemsPerPage: itemsPerPage, currentPage: p }">
+    <td>{{b.ID}}</td>
+    <td>{{b.BookName}}</td>
+    <td>{{b.AuthorName}}</td>
+    <td>{{b.Price}}</td>
+  </tr>
+</table>
+<pagination-controls (pageChange)="p = $event" >
+</pagination-controls>
+<p style="color:red;">End of document</p>
+                      <!-- id="some_id"
+                      (pageChange)="pageChanged($event)"
+                      maxSize="9"
+                      directionLinks="true"
+                      autoHide="true"
+                      responsive="true"
+                      previousLabel="Previous"
+                      nextLabel="Next"
+                      screenReaderPaginationLabel="Pagination"
+                      screenReaderPageLabel="page"
+                      screenReaderCurrentLabel="You're on page" -->
+
+                     

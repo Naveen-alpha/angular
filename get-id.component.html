@@ -1,0 +1,30 @@
+
+<h2 style="background-color:powderblue;">Get Book By ID details</h2>
+
+<!-- <div id="GetID">
+  <form (ngSubmit)="onSubmit(GetID)" #GetID="ngForm">
+    <div class="modal" class="form-group">
+      <label for="name">ID
+        <input class="form-control" name="ID"  required [(ngModel)]="ID" placeholder="Enter Bookid">      
+        </label>
+    </div>
+    <button type="submit" >Submit</button>
+  </form>  
+</div> -->
+
+<input #box (keyup.enter)="onEnter(box.value)" placeholder="Press Enter after type ID">
+<table width=100% border="collapse">
+    <tr style="font-family:verdana;"  style="background-color:Tomato;">
+      <th>BookId</th>
+      <th>BookName</th>
+      <th>AuthorName</th>
+      <th>Price</th>
+    </tr>
+    <tr align="center" *ngFor="let bbid of getbookbyid">
+      <td>{{bbid.ID}}</td>
+      <td>{{bbid.BookName}}</td>
+      <td>{{bbid.AuthorName}}</td>
+      <td>{{bbid.Price}}</td>
+    </tr>
+  </table>
+  <p style="color:red;">End of document</p>
