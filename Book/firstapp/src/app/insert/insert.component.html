@@ -1,0 +1,89 @@
+<mat-form-field>
+    <input matInput [matDatepicker]="picker" placeholder="Choose a date">
+    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker #picker></mat-datepicker>
+  </mat-form-field>
+  <h2 style="background-color:powderblue;">INSERT BOOK</h2> 
+  <div [class]="message" id="bookForm">
+    <form (ngSubmit)="onSubmit(bookForm)" #bookForm="ngForm">
+      <div class="modal" class="form-group">
+        <label for="name">ID
+          <input class="form-control" name="ID" required [(ngModel)]="ID" placeholder="Enter Bookid">      
+          </label>
+          <label for="name">BookName
+          <input class="form-control" name="BookName" required [(ngModel)]="BookName" placeholder="BookName">
+          </label>
+          <label for="name">AuthorName
+          <input class="form-control" name="AuthorName" required [(ngModel)]="AuthorName" placeholder="AuthorName">      
+          </label>
+          <label for="name">Price
+          <input class="form-control" name="Price" required [(ngModel)]="Price" placeholder="Price">      
+          </label>
+      </div>
+      <button class="i" type="submit" >Submit</button>
+    </form>  
+  </div>
+ 
+ <table  width=100% border="collapse">
+  <tr  style="font-family:verdana;" style="background-color:Tomato;">
+    <th>BookId</th>
+    <th>BookName</th>
+    <th>AuthorName</th>
+    <th>Price</th>
+  </tr>
+  <tr align="center" *ngFor="let b of book">
+    <td>{{b.ID}}</td>
+    <td>{{b.BookName}}</td>
+    <td>{{b.AuthorName}}</td>
+    <td>{{b.Price}}</td>
+  </tr>
+</table>
+<p style="color:red;">End of document</p> 
+
+<!-- <h2 style="background-color:powderblue;">INSERT BOOK</h2> 
+  <form  [formGroup]="bookdetails" (ngSubmit)="onSubmit()">
+    <h5 *ngIf="success">Your Book is added!</h5>
+      <label >ID
+        <input type="text" formControlName="id"  placeholder="Enter Bookid">      
+        <div *ngIf="submitted && bookdetails.controls.id.errors" class="error">
+          <div *ngIf="bookdetails.controls.id.errors.required">Id is required</div>
+        </div>
+      </label>
+        <label >BookName
+            <input type="text" formControlName="bname"  placeholder="Enter Bookname">      
+            <div *ngIf="submitted && bookdetails.controls.bname.errors" class="error">
+              <div *ngIf="bookdetails.controls.bname.errors.required">Bookname is required</div>
+            </div>
+        </label>
+        <label >AuthorName
+            <input type="text" formControlName="aname" placeholder="Enter Authorname">      
+            <div *ngIf="submitted && bookdetails.controls.aname.errors" class="error">
+              <div *ngIf="bookdetails.controls.aname.errors.required">Authorname is required</div>
+            </div>        
+          </label>
+        <label >Price
+            <input type="text" formControlName="price"  placeholder="Enter Price">      
+            <div *ngIf="submitted && bookdetails.controls.price.errors" class="error">
+              <div *ngIf="bookdetails.controls.price.errors.required">price is required</div>
+            </div>        
+          </label>
+    <input typr="submit" value="add book" class="cta">
+  </form>  
+
+<div *ngIf="submitted" class="results">
+<table  width=100% border="collapse">
+<tr  style="font-family:verdana;" style="background-color:Tomato;">
+  <th>BookId</th>
+  <th>BookName</th>
+  <th>AuthorName</th>
+  <th>Price</th>
+</tr>
+<tr align="center" *ngFor="let b of book">
+  <td>{{b.ID}}</td>
+  <td>{{b.BookName}}</td>
+  <td>{{b.AuthorName}}</td>
+  <td>{{b.Price}}</td>
+</tr>
+</table>
+<p style="color:red;">End of document</p> 
+</div> -->

@@ -1,0 +1,38 @@
+<h2 style="background-color:powderblue;">Update Book By ID details</h2>
+Enter ID to update :
+<input #box (keyup.enter)="onEnter(box.value)" placeholder="Press Enter after type ID">
+    <div class="message"  id="updateID">
+        <form (ngSubmit)="onSubmit(updateID)" #updateID="ngForm">
+          <div class="modal" class="form-group">
+            <label for="name">ID
+              <input class="form-control" value={{ID}}  name="ID" required [(ngModel)]="ID" >      
+              </label>
+              <label for="name">BookName
+              <input class="form-control"  value={{BookName}} name="BookName" required [(ngModel)]="BookName" >
+              </label>
+              <label for="name">AuthorName
+              <input class="form-control" value={{AuthorName}} name="AuthorName" required [(ngModel)]="AuthorName" >      
+              </label>
+              <label for="name">Price
+              <input class="form-control" value={{Price}} name="Price" required [(ngModel)]="Price">      
+              </label>
+          </div>
+          <button  type="submit" >Submit</button>
+        </form>  
+      </div>
+<table width=100% border="collapse">
+  <tr style="font-family:verdana;"  style="background-color:Tomato;">
+    <th>BookId</th>
+    <th>BookName</th>
+    <th>AuthorName</th>
+    <th>Price</th>
+  </tr>
+  <tr align="center" *ngFor="let b of book">
+    <td>{{b.ID}}</td>
+    <td>{{b.BookName}}</td>
+    <td>{{b.AuthorName}}</td>
+    <td>{{b.Price}}</td>
+  </tr>
+ 
+</table>
+<p style="color:red;">End of document</p> 
