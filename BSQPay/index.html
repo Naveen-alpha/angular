@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="myApp">
+
+<head>
+    <title>BSQ-Link</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.9/angular.min.js"></script>
+    <script src="main.js"></script>
+    <script src="https://www.google.com/recaptcha/api.js?render=6Lcn0t8UAAAAAIWkxsf3jCE6nrxYFcCOCILl2zjI"></script>
+    <!-- <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.1/build/pure-min.css"
+        integrity="sha384-oAOxQR6DkCoMliIh8yFnu25d7Eq/PHS21PClpwjOTeU2jRSq11vu66rf90/cZr47" crossorigin="anonymous"> -->
+    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"
+        integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,600,700,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsencrypt/2.3.1/jsencrypt.min.js" async></script>
+
+</head>
+
+<body ng-controller="MainCtrl">
+
+    <div id="box" class="text-center wd" ng-show="!receipt">
+        <div class="header-bizsq">
+            <div class="topic">BIZSQ Quick Pay</div>
+        </div>
+        <div class="sectionhd">
+            <div ng-show="errorFlag && !successMessage" class="msgcnt">
+                {{errorMessage}}
+            </div>
+
+
+            <div ng-show="!errorFlag">
+                <form name="myForm" novalidate>
+                    <!-- <div class="card text-center">
+                        <span class="icontd"><i class="fa fa-cc-visa clr-blue"></i></span>
+
+                        <span class="icontd"><i class="fa fa-credit-card clr-red"></i></span>
+                        <span class="icontd"><i class="fa fa-cc-mastercard clr-org"></i></span>
+                        <span class="icontd"><i class="fa fa-cc-amex clr-db"></i></span>
+
+                    </div> -->
+                    <div class="crd-img text-center"><img src="images/cardimage.jpeg" class="img-fluid" /></div>
+                    <div class="text-center">
+                        <font size="1">credit & debit cards</font>
+                    </div>
+                    <div class="cus-name">
+                        <font size="4" ng-show="Oldcustomer">{{CusfirstName}} {{CuslastName}} -</font>
+                        <span>{{payeeMobile}}</span>
+                    </div>
+                    <div class="text-center">
+                        <span style="font-size: 20px;float: left;">${{amountt!=0?amountt:amount| number : 2}}</span>
+                        <span style="float:right;">
+                            <button type="submit" class="btn btn-default"
+                                ng-click="target?(target=false):(target=true)">Edit</button>
+                        </span>
+                    </div>
+                    <div class="spacer3"></div>
+                    <div ng-show="payeeMobile && target" class="edit-amt">
+                        <div class="spacer"></div>
+                        Amount should be greater than or equal to ${{amount}}
+                    </div>
+                    <div class="form-group" ng-show="target">
+                        <input class="form-control" id="amt" placeholder="Amount *" ng-value="amount" name="amt"
+                            autocomplete="off" type="text" ng-model="amountt" ng-disabled="disableFlag" required>
+                        <span ng-show="myForm.amt.$touched && myForm.amt.$invalid" class="valid">
+                            <span ng-show="myForm.amt.$error.required">Please enter the Amount to Pay</span>
+                            <!-- <span ng-show="myForm.amt.$error.pattern">Not a valid Amount</span> -->
+                        </span>
+                    </div>
+                    <div class="form-group text-center">
+                        <input class="form-control" id="cardnumber" placeholder="Card Number *" name="cardNumber"
+                            ng-keypress="keyPress($event)" minlength="13" maxlength="16" type="text" autocomplete="off"
+                            ng-pattern="/^[0-9]{13,16}$/" ng-model="card.cardNumber" ng-disabled="disableFlag" required>
+
+                        <span ng-show="myForm.cardNumber.$touched && myForm.cardNumber.$invalid" class="valid">
+                            <span ng-show="myForm.cardNumber.$error.required">Please enter a valid Card Number</span>
+                            <span ng-show="myForm.cardNumber.$error.minlength">Invalid Card Number</span>
+                        </span>
+
+                    </div>
+                    <div ng-show="myForm.cardNumber.$touched && myForm.cardNumber.$invalid" class="spacer16">
+                    </div>
+                    <div class="form-group" style="width: 50%;float: right;">
+                        <input class="form-control" id="cvv" placeholder="CVV *" name="cvv" autocomplete="off"
+                            ng-keypress="keyPress($event)" ng-pattern="/^[0-9]{3,4}$/" type="password" min="0"
+                            minlength="3" maxlength="4" ng-model="card.cvv" ng-disabled="disableFlag" required>
+                        <span ng-show="myForm.cvv.$touched && myForm.cvv.$invalid" class="valid">
+                            <span ng-show="myForm.cvv.$error.required">Please enter a valid CVV. <span class="cvv"><a
+                                        class="anchor"> What’s CVV?</a></span> </span>
+                            <span ng-show="myForm.cvv.$error.pattern">Invalid CVV</span>
+                        </span>
+                    </div>
+                    <div class="form-group" style="width: 48%;">
+                        <div style="width: 47%;float: left;">
+                            <select ng-model="month" class="form-control" name="mon" #mon="ngModel" id="mon"
+                            ng-change="checkMonth()" ng-model="month" required>
+                                <option selected disabled value="">Month*</option>
+                                <option ng-repeat="m in months">{{m}}</option>
+                            </select>
+                        </div>
+                        <div style="width: 47%;float: right;">
+                            <select ng-model="year" class="form-control" name="yr" #yr="ngModel" id="yr" ng-model="year"
+                               ng-change="checkMonth()" required>
+                                <option selected disabled value="">Year*</option>
+                                <option ng-repeat="y in years">{{y}}</option>
+                            </select>
+                        </div>
+                        <!-- <input style="width:50%;float:left;" class="form-control" id="exp" placeholder="Exp date YYYYMM"
+                            autocomplete="off" ng-pattern="/^[0-9]{6}$/" type="number" min="0" maxlength="6"
+                            name="exp" ng-model="card.expiryDate" ng-disabled="disableFlag" required> -->
+                    </div>
+                        <span ng-show="(myForm.yr.$touched && myForm.yr.$invalid) ||( myForm.mon.$touched && myForm.mon.$invalid)"  class="valid" style="text-align: left;">
+                            <span ng-show="myForm.mon.$error.required || myForm.yr.$error.required">Select an Expiry Date</span>
+                        </span>
+                        <span ng-show="(myForm.yr.$touched && myForm.yr.$valid) ||( myForm.mon.$touched && myForm.mon.$valid) "  class="valid" style="text-align: left;">
+                            <span  ng-show="invalidExp">Invalid Expiry Date</span>
+                        </span>
+                      
+                    <div ng-show="(myForm.cvv.$touched && myForm.cvv.$invalid)||(myForm.yr.$touched && myForm.yr.$invalid) ||( myForm.mon.$touched && myForm.mon.$invalid) || invalidExp" style="height: 71px;">
+                    </div>
+                    <div>
+                        <div style="width: 48%;float: left;">
+                            <div class="form-group">
+                                <input class="form-control" id="firstName" placeholder="First Name *" name="firstName"
+                                    ng-keypress="keyPressName($event)" maxlength="30" autocomplete="off"
+                                    ng-model="card.firstName" ng-disabled="disableFlag" required>
+                                <span ng-show="myForm.firstName.$touched && myForm.firstName.$invalid" class="valid">
+                                    <span ng-show="myForm.firstName.$error.required">Please enter the First Name</span>
+                                </span>
+                            </div>
+                        </div>
+                        <div style="width: 50%;float: right;">
+                            <div class="form-group">
+                                <input class="form-control" id="lastName" placeholder="Last Name *" name="lastName"
+                                    ng-keypress="keyPressName($event)" maxlength="30" autocomplete="off"
+                                    ng-model="card.lastName" ng-disabled="disableFlag" required>
+                                <span ng-show="myForm.lastName.$touched && myForm.lastName.$invalid" class="valid">
+                                    <span ng-show="myForm.lastName.$error.required">Please enter the Last Name</span>
+                                </span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- <div class="form-group">
+                        <input class="form-control" id="cardname" placeholder="Name on Card *" name="cardname"
+                        ng-keypress="keyPressName($event)" maxlength="30"  autocomplete="off" ng-model="card.cardName"
+                            ng-disabled="disableFlag" required>
+                        <span ng-show="myForm.cardname.$touched && myForm.cardname.$invalid" class="valid">
+                            <span ng-show="myForm.cardname.$error.required">Please enter the Name on the Card</span>
+                        </span>
+                        </span>
+                    </div> -->
+                    <div class="form-group">
+                        <input class="form-control" id="zip" type="text" minlength="5" maxlength="5"
+                            ng-keypress="keyPress($event)" placeholder="Zip/Postal *" name="zip" ng-model="card.zipCode"
+                            autocomplete="off" ng-pattern="/^[0-9]{5}$/" ng-disabled="disableFlag" required>
+                        <span ng-show="myForm.zip.$touched && myForm.zip.$invalid" class="valid">
+                            <span ng-show="myForm.zip.$error.required">Please enter the Zip Code</span>
+                            <span ng-show="myForm.zip.$error.pattern">Invalid Zip Code</span>
+                        </span>
+
+
+                    </div>
+                    <div class="form-group" ng-show="!Oldcustomer && !payeeMobile">
+                        <input class="form-control" id="mbl" placeholder="Mobile Number *" name="mbl" autocomplete="off"
+                            ng-keypress="keyPress($event)" ng-change="myForm.mbl.$valid?checkCustomer():customerFound=null"
+                            maxlength="10" ng-pattern="/^[0-9]{10}$/" ng-model="mobileNumber" ng-value="payeeMobile"
+                            ng-disabled="disableFlag" required>
+                        <span ng-show="myForm.mbl.$invalid && myForm.mbl.$touched" class="valid">
+                            <span style="color: red;" ng-show="myForm.mbl.$error.required">Please enter a valid Mobile Number</span>
+                            <span style="color: red;" ng-show="myForm.mbl.$error.pattern">Invalid Mobile Number</span>
+                        </span>
+                        <div style="text-align: left;" ng-show="customerFound!=null && myForm.mbl.$valid">Customer Found : <span
+                                class="cr-name"> {{customerFound.firstName}} {{customerFound.lastName}}</span></div>
+                        <span class="valid" ng-show="mobileNumber==merchantMobile">Payment cannot allowed yourself
+                            {{merchantMobile}}</span>
+                    </div>
+                    <div class="checkbox" style="text-align: left;" ng-show="!Oldcustomer && !iscustomer">
+                        <label> <input type="checkbox" name="remember" ng-model="createAccount"
+                                ng-disabled="disableFlag">
+                            Create account and Remember card
+                        </label>
+
+                    </div>
+
+                    <div class="spacer"></div>
+                    <div ng-show="createAccount && !Oldcustomer">
+                        <div class="checkbox" style="text-align:left;">
+                            <label> <input type="checkbox" name="generate" ng-model="generatePassword"
+                                    ng-disabled="disableFlag">
+                                Auto generate password
+                            </label>
+
+                        </div>
+                        <div ng-show="!generatePassword">
+                            <div class="form-group">
+                                <input class="form-control" id="passwordd" placeholder="Enter password *"
+                                    name="passwordd" ng-keypress="keyPressPass($event)" type="password"
+                                    ng-model="password"
+                                    pattern="(?=.*[!@#$%^&*()])(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).{8,15}" maxlength="15"
+                                    ng-disabled="disableFlag" required>
+                                <span ng-show="myForm.passwordd.$touched && myForm.passwordd.$invalid" class="valid">
+                                    <span ng-show="myForm.passwordd.$error.required">Please enter the Password</span>
+                                    <span ng-show="myForm.passwordd.$error.pattern">Enter a valid Password</span>
+
+                                </span>
+                            </div>
+                            <div class="spacer2"></div>
+                            <div ng-show="pwreq" style="font-size: 10px;font-weight: 500;">
+                                <i><b style="float: left;text-align:left;" class="f12">
+                                        <span>--8-15 Characters long.</span><br />
+                                        <span> --Contain atleast one Lower Case and Upper Case letter.</span><br />
+                                        <span> --Contain atleast one Number and Special Character
+                                            [‘!’,’@’,’#’,’$’,’%’,’^’,’&’,’*’,’(‘, ’)’].</span>
+                                    </b></i>
+                            </div>
+                            <div class="form-group forgotpwd-txt">
+                                <a ng-click="pwreq?(pwreq=false):(pwreq=true)" style="cursor: pointer;">Password
+                                    Requirements</a>
+                            </div>
+                            <div class="form-group">
+                                <input class="form-control" id="confirmpw" placeholder="Re-enter password to confirm *"
+                                    maxlength="15" type="password" name="confirmpw" ng-model="confirmpassword"
+                                    ng-disabled="disableFlag" ng-change="checkPass()" required>
+                                <div ng-show="myForm.confirmpw.$touched && myForm.confirmpw.$invalid" class="valid">
+                                    <span ng-show="myForm.confirmpw.$error.required">Please enter the password to
+                                        confirm</span>
+                                </div>
+                            </div>
+                            <div ng-show="!disableFlag">
+                                <span ng-show="myForm.confirmpw.$valid" style="font-size: 12px;float:left;">
+                                    {{matchPassMes}}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="form-group" ng-show="disableFlag">
+                            <input class="form-control" id="otp" placeholder="Enter one time password *" name="otp"
+                                ng-click="invalidOtp=false" autocomplete="off" ng-model="otp" required>
+                            <span ng-show="myForm.otp.$touched && myForm.otp.$invalid" class="valid">
+                                <span ng-show="myForm.otp.$error.required">Please enter the OTP</span>
+                            </span>
+                        </div>
+                        <div ng-show="disableFlag" class="resend-otp" ng-click="resendotp()">Re-send OTP</div>
+                        <div ng-show="invalidOtp">
+                            <span class="valid">
+                                {{errorMessage}}
+                            </span>
+                        </div>
+                    </div>
+                    <div ng-show="localErrorFlag">
+                        <span class="valid" style="float: none;">
+                            {{localErrorMsg}}
+                        </span>
+                    </div>
+
+                    <div class="spacer"></div>
+
+                    <div class="text-center" ng-show="createAccount && !Oldcustomer">
+                        <button type="submit" class="btn-fwidth btn-primary"
+                            ng-disabled="used1 || invalidExp || mobileNumber==merchantMobile || !active || myForm.cardNumber.$invalid || (!generatePassword?myForm.confirmpw.$invalid:false) || (!generatePassword?myForm.passwordd.$invalid:false )|| (!generatePassword?!matched:false) ||
+                        myForm.mon.$invalid || myForm.yr.$invalid || myForm.cvv.$invalid || myForm.firstName.$invalid || myForm.lastName.$invalid || myForm.zip.$invalid || (!payeeMobile?myForm.mbl.$invalid:false) || (disableFlag?myForm.otp.$invalid:false) || (!payeeMobile?(amountt==0?true:false):false)"
+                            ng-click="disableFlag?quickpaycomplete():quickpay()"><span><i class="fa fa-lock"></i></span>
+                            Pay ${{amountt!=0?amountt:amount| number : 2}}&nbsp;
+                            <span ng-show="createAccount && !disableFlag">& Create account</span>
+                            <span ng-show="disableFlag">Confirm</span>
+                        </button>
+                    </div>
+                    <div class="text-center" ng-show="!createAccount || Oldcustomer">
+                        <button type="submit" class="btn-fwidth btn-primary"
+                            ng-disabled="used2 || invalidExp || mobileNumber==merchantMobile || !active || myForm.cardNumber.$invalid ||
+                        myForm.mon.$invalid || myForm.yr.$invalid || myForm.cvv.$invalid || myForm.firstName.$invalid || myForm.lastName.$invalid || myForm.zip.$invalid || (!payeeMobile?myForm.mbl.$invalid:false)|| (!payeeMobile?(amountt==0?true:false):false)"
+                            ng-click="quickpaycomplete()"><span><i class="fa fa-lock"></i></span>
+                            Pay ${{amountt!=0?amountt:amount| number : 2}}&nbsp;
+                        </button>
+                    </div>
+
+                </form>
+                <!-- <div class="text-center" ng-show="!active">
+                    <font size="3">Note : Merchant not active</font>
+                </div> -->
+                <div class="spacer"></div>
+                <div class="sec-four text-center">
+                    <p class="query" ng-show="Oldcustomer">Payment requested by <span>{{businessName}}</span> </p>
+                    <p class="query" ng-show="!Oldcustomer">Payment sent to <span>{{businessName}}</span> </p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <section class="user-receipt" ng-show="receipt">
+        <div class="container">
+
+            <div class="payment-receipt">
+                <div class="row">
+                    <div class="col-xs-1 col-sm-2 col-md-2 col-lg-3"></div>
+                    <div class="col-xs-10 col-sm-8 col-md-8 col-lg-6">
+
+                        <div class="sec-one">
+                            <!-- <div class="usr-img text-center"><img src="images/letter.png" class="img-fluid" /></div> -->
+                            <div class="cr-name text-center" ng-show="Oldcustomer">{{CusfirstName}} {{CuslastName}}
+                            </div>
+                            <div class="cr-name text-center" ng-show="!Oldcustomer">{{card.firstName}} {{card.lastName}}</div>
+
+
+                            <h3 class="paid-amount text-center"><span>$</span>{{amountt!=0?amountt:amount| number : 2}}
+                            </h3>
+                            <div class="text-center clr-grn"><b> Paid successfully to</b></div>
+                            <div class="cr-name text-center">
+                                <!-- {{firstName}} {{lastName}} -->
+                                {{businessName}}
+                            </div>
+                        </div>
+
+                        <hr color="#e6e6e6">
+
+                        <div class="main-bg">
+
+                            <div class="sec-two">
+                                <div class="trans-detail">
+                                    <div class="paid-date">
+                                        <h5 class="dt-head">DATE PAID</h5>
+                                        <h5 class="dt-cont"> {{ requestTime}}</h5>
+                                    </div>
+
+                                    <div class="pull-right">
+                                        <h5 class="dt-head">PAYMENT PAID WITH</h5>
+                                        <h5 class="dt-cont pull-right">
+                                            <bold>{{cardType}}</bold>
+                                            -{{(card.cardNumber.toString()).substring((card.cardNumber.toString()).length-4)}}
+                                        </h5>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="sec-three">
+                                <h5 class="dt-head">SUMMARY</h5>
+                                <div class="trans-data">
+                                    <table class="data-details">
+                                        <tbody>
+                                            <tr>
+                                                <th scope="row">Transaction ID</th>
+                                                <td class="trans-nm pull-right">
+                                                    #{{processId}}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row">Amount Paid</th>
+                                                <td class="trans-nm pull-right">
+                                                    ${{amountt!=0?amountt:amount| number : 2}}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row">Order Details</th>
+                                                <td class="trans-nm pull-right">
+                                                    <pre
+                                                        ng-show="payeeMobile"><code> {{description?description:'-'}}</code></pre>
+                                                    <pre ng-show="!payeeMobile"><code>-</code></pre>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                            </div>
+
+                            <hr color="#e6e6e6">
+
+                            <div class="sec-four text-center">
+                                <p class="query">if you have any queries, contact us at <span>{{businessName}}</span> or
+                                    call at <span>+1 {{merchantMobile}}.</span></p>
+                            </div>
+                            <form name="myForm2" novalidate>
+                                <div class="form-group" ng-show="!share">
+                                    <input class="form-control" id="mail" placeholder="Enter email Id" name="mail" email
+                                        type="email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$" ng-model="email"
+                                        required>
+                                    <span ng-show="myForm2.mail.$invalid" class="valid">
+                                        <span style="color: red;" ng-show="myForm2.mail.$error.required">Please enter a
+                                            Valid Email ID</span>
+                                        <span style="color: red;" ng-show="myForm2.mail.$error.pattern">Not a valid
+                                            Email ID</span>
+                                    </span>
+                                </div>
+                            </form>
+                            <div class="sec-four text-center" ng-show="share">
+                                <p class="query">Email sent successfully to <span>{{email}}</span> </p>
+                            </div>
+                            <div class="share-button text-center" ng-show="!share"><a ng-click="sendmail()"><button
+                                        class="button" ng-disabled="(email?false:true) || used3">Share
+                                        Receipt</button></a></div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-xs-1 col-sm-2 col-md-2 col-lg-3"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+
+</html>
